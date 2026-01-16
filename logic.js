@@ -1,18 +1,60 @@
 /**
- * GitHub 업로드 테스트용 로직 파일
- * 이 파일의 내용이 바뀌고 Push되면 대시보드에서 즉시 확인 가능합니다.
+ * PDF Splitter Logic Module
+ * GitHub에 저장되어 원격으로 계산 로직을 제공합니다.
  */
 
-export function getMessage() {
-    const luckyMessages = [
-        "✨ 오늘은 코드가 한 번에 돌아갈 운명입니다!",
-        "🚀 새로운 기능을 구현하기에 아주 좋은 날이네요.",
-        "💡 예상치 못한 버그가 창의적인 아이디어로 변할 것입니다.",
-        "🍀 미노님의 MinoLab 프로젝트가 멋지게 성장하고 있습니다.",
-        "🎉 GitHub 데스크톱 연동 테스트 성공을 축하합니다!"
-    ];
+/**
+ * 용량(MB) 기반으로 분할할 페이지 범위를 계산합니다.
+ * @param {number} totalPages 전체 페이지 수
+ * @param {number} totalSizeBytes 전체 파일 크기 (Bytes)
+ * @param {number} targetSizeMB 목표 분할 용량 (MB)
+ * @returns {Array} 페이지 범위 배열 [{start, end}, ...]
+ */
+export function calculateSplitRangesBySize(totalPages, totalSizeBytes, targetSizeMB) {
+    const totalSizeMB = totalSizeBytes / (1024 * 1024);
+    const pagesPerPart = Math.ceil(totalPages / (totalSizeMB / targetSizeMB));
     
-    // 무작위로 메시지 하나를 골라서 반환합니다.
-    const randomIndex = Math.floor(Math.random() * luckyMessages.length);
-    return luckyMessages[randomIndex];
+    const ranges = [];
+    for (let i = 0; i < totalPages; i += pagesPerPart) {
+        ranges.push({
+            start: i,
+            end: Math.min(i + pagesPerPart - 1, totalPages - 1)
+        });
+    }
+    return ranges;
+}
+
+/**
+ * 퍼센트(%) 기반으로 분할할 페이지 범위를 계산합니다.
+ * @param {number} totalPages 전체 페이지 수
+ * @param {Array} percentages 퍼센트 배열 (예: [30, 70])
+ * @returns {Array} 페이지 범위 배열
+ */
+export function calculateSplitRangesByPercent(totalPages, percentages) {
+    const ranges = [];
+    let currentStart = 0;
+    
+    percentages.forEach((percent, index) => {
+        const pageCount = Math.round(totalPages * (percent / 100));
+        let end = currentStart + pageCount - 1;
+        
+        // 마지막 항목은 남은 모든 페이지를 포함
+        if (index === percentages.length - 1 || end >= totalPages) {
+            end = totalPages - 1;
+        }
+        
+        if (currentStart < totalPages) {
+            ranges.push({ start: currentStart, end: end });
+        }
+        currentStart = end + 1;
+    });
+    
+    return ranges;
+}
+
+/**
+ * 테스트용 메시지
+ */
+export function getMessage() {
+    return "✨ PDF 분할 엔진이 GitHub으로부터 로드되었습니다!";
 }
