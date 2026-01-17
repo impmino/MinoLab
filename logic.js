@@ -7,7 +7,7 @@ Version: 1.0.2 (수정 버전)
 이 파일은 마크다운 기호 없이 순수하게 아래 내용만 있어야 합니다.
 */
 
-export const VERSION = "1.0.2";
+export const VERSION = "1.0.21";
 
 export function calculateSplitRangesBySize(totalPages, totalSizeBytes, targetSizeMB) {
 const totalSizeMB = totalSizeBytes / (1024 * 1024);
