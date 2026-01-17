@@ -1,53 +1,21 @@
 /**
+ * MinoLab PDF Preview Engine
+ * Version: 1.0.3
+ */
 
-MinoLab PDF Engine
+export const VERSION = "1.0.3";
 
-Version: 1.0.2 (수정 버전)
-
-이 파일은 마크다운 기호 없이 순수하게 아래 내용만 있어야 합니다.
-*/
-
-export const VERSION = "1.0.21";
-
-export function calculateSplitRangesBySize(totalPages, totalSizeBytes, targetSizeMB) {
-const totalSizeMB = totalSizeBytes / (1024 * 1024);
-const pagesPerPart = Math.ceil(totalPages / (totalSizeMB / targetSizeMB));
-
-const ranges = [];
-for (let i = 0; i < totalPages; i += pagesPerPart) {
-    ranges.push({
-        start: i,
-        end: Math.min(i + pagesPerPart - 1, totalPages - 1)
-    });
-}
-return ranges;
-
-
+/**
+ * 첫 페이지의 범위를 반환합니다.
+ * @returns {Array} [{start: 0, end: 0}]
+ */
+export function getFirstPageRange() {
+    return [{ start: 0, end: 0 }];
 }
 
-export function calculateSplitRangesByPercent(totalPages, percentages) {
-const ranges = [];
-let currentStart = 0;
-
-percentages.forEach((percent, index) => {
-    const pageCount = Math.max(1, Math.round(totalPages * (percent / 100)));
-    let end = currentStart + pageCount - 1;
-    
-    if (index === percentages.length - 1 || end >= totalPages) {
-        end = totalPages - 1;
-    }
-    
-    if (currentStart < totalPages) {
-        ranges.push({ start: currentStart, end: end });
-    }
-    currentStart = end + 1;
-});
-
-return ranges;
-
-
-}
-
+/**
+ * 연동 확인 메시지
+ */
 export function getMessage() {
-return 🚀 MinoLab PDF Engine v${VERSION} 연동에 성공했습니다!;
+    return `🚀 MinoLab PDF Preview Engine v${VERSION} 활성화됨!`;
 }
